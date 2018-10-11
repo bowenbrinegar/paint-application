@@ -1,0 +1,14 @@
+.root {
+    -fx-background-color: lightslategray;
+}
+
+.menu-bar {
+    -fx-background-color: lightblue;
+}
+
+.menu-items {
+    -fx-text-fill: aliceblue;
+}
+.canvas {
+    -fx-background-color: blue;
+}

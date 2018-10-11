@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.ColumnConstraints?>
+
+
+<BorderPane maxHeight="600.0" maxWidth="1000.0" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" stylesheets="@style.css" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="app.Controller">
+   <top>
+      <VBox prefHeight="26.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" styleClass="menu-items" text="File">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" styleClass="menu-items" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" styleClass="menu-items" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </children>
+      </VBox>
+   </top>
+   <bottom>
+      <HBox prefHeight="47.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+         <children>
+            <Pane prefHeight="47.0" prefWidth="232.0">
+               <children>
+                  <Slider fx:id="brushSize" layoutX="24.0" layoutY="16.0" prefHeight="16.0" prefWidth="87.0" />
+                  <CheckBox layoutX="122.0" layoutY="15.0" mnemonicParsing="false" prefHeight="18.0" prefWidth="88.0" text="CheckBox" />
+               </children>
+            </Pane>
+            <Pane centerShape="false" nodeOrientation="RIGHT_TO_LEFT" prefHeight="47.0" prefWidth="806.0">
+               <children>
+                  <ColorPicker fx:id="colorPicker" layoutX="127.0" layoutY="10.0" />
+                  <Button layoutX="226.0" layoutY="10.0" mnemonicParsing="false" onAction="#brush" text="Brush" />
+                  <Button fx:id="createCanvas" layoutX="11.0" layoutY="10.0" mnemonicParsing="false" onAction="#createCanvas" text="Create Canvas" />
+                  <Button layoutX="289.0" layoutY="10.0" mnemonicParsing="false" onAction="#circle" text="Circle" />
+                  <Button layoutX="353.0" layoutY="10.0" mnemonicParsing="false" onAction="#rectangle" text="Rectangle" />
+                  <Button layoutX="441.0" layoutY="10.0" mnemonicParsing="false" text="Gradient" />
+               </children>
+            </Pane>
+         </children>
+      </HBox>
+   </bottom>
+   <center>
+      <Pane fx:id="canvasFrame" prefHeight="333.0" prefWidth="597.0" BorderPane.alignment="CENTER">
+         <cursor>
+            <Cursor fx:constant="CROSSHAIR" />
+         </cursor></Pane>
+   </center>
+</BorderPane>
