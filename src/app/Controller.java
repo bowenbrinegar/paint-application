@@ -5,7 +5,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.control.*;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeLineCap;
 
 public class Controller {
@@ -13,9 +15,12 @@ public class Controller {
     public Button createCanvas;
     public Pane canvasFrame;
     public Slider brushSize;
-    public Line dragLine;
 
-    private enum mode { BRUSH, RECTANGLE, GRADIENT, CIRCLE }
+    private Canvas canvas;
+    private Line dragLine;
+    private Circle dragCircle;
+    private Rectangle dragRectangle;
+    private enum mode { BRUSH, RECTANGLE, GRADIENT, CIRCLE, SELECTION, ERASE }
     private mode currentMode;
     private Double _prev_x;
     private Double _prev_y;
@@ -31,7 +36,15 @@ public class Controller {
     public void circle() {
         this.currentMode = mode.CIRCLE;
     }
-    
+
+    public void selection() {
+        this.currentMode = mode.SELECTION;
+    }
+
+    public void erase() {
+        this.currentMode = mode.ERASE;
+    }
+
     public void createCanvas() {
         createCanvas.setText("Clear Canvas");
 
@@ -44,11 +57,8 @@ public class Controller {
         double width = 597.0;
         double height = 333.0;
 
-        final Canvas canvas = new Canvas(width, height);
+        this.canvas = new Canvas(width, height);
         GraphicsContext gc = canvas.getGraphicsContext2D();
-
-        gc.setFill(Color.WHITE);
-        gc.fillRect(25,25,width - 50,height - 50);
 
         canvas.getStyleClass().add("canvas-frame");
         canvas.setOnMouseDragged(event -> {
@@ -56,6 +66,7 @@ public class Controller {
             double y = event.getY();
 
             if (this.currentMode == mode.BRUSH) {
+
                 gc.setStroke(colorPicker.getValue());
                 gc.setLineWidth(brushSize.getValue());
                 gc.setLineCap(StrokeLineCap.ROUND);
@@ -63,6 +74,7 @@ public class Controller {
 
                 _prev_x = x;
                 _prev_y = y;
+
             } else if (this.currentMode == mode.RECTANGLE || this.currentMode == mode.CIRCLE) {
                 canvasFrame.getChildren().remove(dragLine);
 
@@ -72,8 +84,49 @@ public class Controller {
                 dragLine.setStartY(_prev_y);
                 dragLine.setEndX(x);
                 dragLine.setEndY(y);
+                dragLine.setStrokeWidth(1);
+                dragLine.setStroke(Color.BLACK);
 
                 canvasFrame.getChildren().add(dragLine);
+            }
+
+            if (this.currentMode == mode.CIRCLE) {
+                canvasFrame.getChildren().remove(dragCircle);
+
+                double _dist = dist(_prev_x, _prev_y, x, y);
+                this.dragCircle = new Circle();
+
+                dragCircle.setCenterX(_prev_x);
+                dragCircle.setCenterY(_prev_y);
+                dragCircle.setRadius(_dist);
+                dragCircle.setFill(null);
+                dragCircle.setStrokeWidth(1);
+                dragCircle.setStroke(Color.BLACK);
+
+                canvasFrame.getChildren().add(dragCircle);
+            }
+
+            if (this.currentMode == mode.RECTANGLE) {
+                canvasFrame.getChildren().remove(dragRectangle);
+
+                this.dragRectangle = new Rectangle();
+
+                dragRectangle.setX(_prev_x);
+                dragRectangle.setY(_prev_y);
+                dragRectangle.setWidth(Math.abs(_prev_x - x));
+                dragRectangle.setHeight(Math.abs(_prev_y - y));
+                dragRectangle.setFill(null);
+                dragRectangle.setStrokeWidth(1);
+                dragRectangle.setStroke(Color.BLACK);
+
+                canvasFrame.getChildren().add(dragRectangle);
+            }
+
+            if (this.currentMode == mode.ERASE) {
+                gc.clearRect(_prev_x, _prev_y, brushSize.getValue(), brushSize.getValue());
+
+                _prev_x = x;
+                _prev_y = y;
             }
         });
 
@@ -94,31 +147,41 @@ public class Controller {
         });
 
         canvas.setOnMouseReleased(event -> {
-            double x = event.getX();
-            double y = event.getY();
-
-
             canvasFrame.getChildren().remove(dragLine);
-            gc.setFill(colorPicker.getValue());
-
 
             if (this.currentMode == mode.RECTANGLE) {
-                gc.fillRect(_prev_x, _prev_y, _prev_x - x, _prev_y - y);
+                dragRectangle.setFill(colorPicker.getValue());
+                dragRectangle.setStrokeWidth(0);
             }
 
             if (this.currentMode == mode.CIRCLE) {
-                double _dist = dist(_prev_x, _prev_y, x, y) * 2;
-                gc.fillOval(_prev_x - (_dist / 2), _prev_y - (_dist / 2), _dist, _dist);
+                dragCircle.setFill(colorPicker.getValue());
+                dragCircle.setStrokeWidth(0);
             }
 
             _prev_x = null;
             _prev_y = null;
         });
 
+        canvasFrame.setOnMouseDragged(event -> {
+            double _x_position = event.getX();
+            double _y_position = event.getY();
+
+            if (this.currentMode == mode.SELECTION) {
+                if (event.getTarget() == dragRectangle) {
+                    dragRectangle.setX(_x_position);
+                    dragRectangle.setY(_y_position);
+                } else if (event.getTarget() == dragCircle) {
+                    dragCircle.setCenterX(_x_position);
+                    dragCircle.setCenterY(_y_position);
+                }
+            }
+        });
+
         canvasFrame.getChildren().add(canvas);
     }
 
-    public double dist(double ax, double ay, double bx, double by) {
+    private double dist(double ax, double ay, double bx, double by) {
         double x = Math.pow((ax - bx), 2);
         double y = Math.pow((ay - by), 2);
         double d = Math.sqrt(x + y);

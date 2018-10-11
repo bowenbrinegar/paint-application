@@ -49,7 +49,8 @@
                   <Button fx:id="createCanvas" layoutX="11.0" layoutY="10.0" mnemonicParsing="false" onAction="#createCanvas" text="Create Canvas" />
                   <Button layoutX="289.0" layoutY="10.0" mnemonicParsing="false" onAction="#circle" text="Circle" />
                   <Button layoutX="353.0" layoutY="10.0" mnemonicParsing="false" onAction="#rectangle" text="Rectangle" />
-                  <Button layoutX="441.0" layoutY="10.0" mnemonicParsing="false" text="Gradient" />
+                  <Button layoutX="441.0" layoutY="10.0" mnemonicParsing="false" onAction="#selection" text="Selection" />
+                   <Button layoutX="541.0" layoutY="10.0" mnemonicParsing="false" onAction="#erase" text="Erase" />
                </children>
             </Pane>
          </children>
